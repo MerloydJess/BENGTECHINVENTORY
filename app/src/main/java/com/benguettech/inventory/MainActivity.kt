@@ -1,6 +1,5 @@
 package com.benguettech.inventory
 
-
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -11,27 +10,33 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.benguettech.inventory.auth.LoginScreen
 import com.benguettech.inventory.auth.RegisterScreen
-import com.benguettech.inventory.ui.theme.inventory.InventoryListScreen
-import com.benguettech.inventory.ui.theme.inventory.InventoryDetailScreen
 import com.benguettech.inventory.ui.theme.InventoryTheme
+import com.benguettech.inventory.ui.theme.inventory.InventoryDetailScreen
+import com.benguettech.inventory.ui.theme.inventory.InventoryListScreen
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint // ✅ Ensure Hilt Injects Dependencies
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 🔹 Ensure Firebase is initialized
-        FirebaseApp.initializeApp(this)
+        // ✅ Ensure Firebase is initialized before use
+        if (FirebaseApp.getApps(this).isEmpty()) {
+            FirebaseApp.initializeApp(this)
+        }
 
         enableEdgeToEdge()
 
@@ -40,12 +45,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             InventoryTheme {
                 val navController = rememberNavController()
+                val currentUser by remember { mutableStateOf(auth.currentUser) } // ✅ Store FirebaseUser
 
-                // 🔹 Handle auto-login if user is already signed in
-                LaunchedEffect(auth) {
-                    val currentUser: FirebaseUser? = auth.currentUser
+                LaunchedEffect(currentUser) { // ✅ Avoid recomputation issues
                     Log.d("MainActivity", "Current User: $currentUser")
-
                     if (currentUser != null) {
                         navController.navigate("inventory") {
                             popUpTo("login") { inclusive = true }

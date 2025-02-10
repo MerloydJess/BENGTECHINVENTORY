@@ -16,11 +16,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.benguettech.inventory.data.model.InventoryItem
 
 @Composable
-fun InventoryListScreen(viewModel: InventoryViewModel = viewModel()) {
+fun InventoryListScreen(viewModel: InventoryViewModel = hiltViewModel()) {
     val inventoryItems by viewModel.inventoryList.collectAsState()
 
     LaunchedEffect(Unit) {

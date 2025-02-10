@@ -50,6 +50,7 @@ android {
 
 dependencies {
 
+    implementation(libs.hilt.navigation.compose)
     kapt (libs.hilt.android.compiler)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
