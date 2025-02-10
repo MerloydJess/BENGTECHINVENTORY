@@ -4,11 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benguettech.inventory.data.model.InventoryItem
 import com.benguettech.inventory.data.repository.InventoryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class InventoryViewModel(private val repository: InventoryRepository) : ViewModel() {
+@HiltViewModel
+class InventoryViewModel @Inject constructor(
+    private val repository: InventoryRepository
+) : ViewModel() {
 
     private val _inventoryList = MutableStateFlow<List<InventoryItem>>(emptyList())
     val inventoryList: StateFlow<List<InventoryItem>> = _inventoryList

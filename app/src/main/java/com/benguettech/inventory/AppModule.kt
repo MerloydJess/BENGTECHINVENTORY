@@ -10,7 +10,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@Suppress("unused") // Suppress unused warnings since Hilt uses this module
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {

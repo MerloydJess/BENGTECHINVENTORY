@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "78455663315",
+    "project_id": "inventory-dd5a3",
+    "storage_bucket": "inventory-dd5a3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:78455663315:android:e457cbde78b5e126d84226",
+        "android_client_info": {
+          "package_name": "com.benguettech.inventory"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0c1k6hnSTemuort56frzfsLJGrsEdgWk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
