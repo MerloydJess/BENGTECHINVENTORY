@@ -1,6 +1,5 @@
 package com.benguettech.inventory.auth
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,28 +21,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.benguettech.inventory.ui.theme.inventory.AuthViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+
 
 @Composable
 fun LoginScreen(
+    viewModel: AuthViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
-    val context = LocalContext.current
-
-    LaunchedEffect(Unit) {
-        if (FirebaseApp.getApps(context).isEmpty()) {
-            FirebaseApp.initializeApp(context)
-        }
-    }
-
-    val auth = FirebaseAuth.getInstance()
+    val authState by viewModel.authState.collectAsState()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -80,9 +71,13 @@ fun LoginScreen(
                 onClick = {
                     isLoading = true
                     coroutineScope.launch {
-                        loginUser(auth, email, password, onLoginSuccess) { message ->
+                        viewModel.login(email, password) { success ->
                             isLoading = false
-                            errorMessage = message
+                            if (success) {
+                                onLoginSuccess()
+                            } else {
+                                errorMessage = "Login failed. Please check your credentials."
+                            }
                         }
                     }
                 },
@@ -100,16 +95,3 @@ fun LoginScreen(
         }
     }
 }
-
-suspend fun loginUser(auth: FirebaseAuth, email: String, password: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
-    try {
-        auth.signInWithEmailAndPassword(email, password).await()
-        onSuccess()
-    } catch (e: Exception) {
-        Log.e("LoginError", "Failed to log in: ${e.message}", e)
-        onError(e.message ?: "Unknown error")
-    }
-}
-
-
-

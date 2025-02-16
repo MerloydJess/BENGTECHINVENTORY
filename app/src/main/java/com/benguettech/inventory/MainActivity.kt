@@ -8,11 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,31 +21,31 @@ import com.benguettech.inventory.ui.theme.inventory.InventoryListScreen
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-@AndroidEntryPoint // ✅ Ensure Hilt Injects Dependencies
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
+    private val _currentUser = MutableStateFlow<FirebaseAuth?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // ✅ Ensure Firebase is initialized before use
-        if (FirebaseApp.getApps(this).isEmpty()) {
-            FirebaseApp.initializeApp(this)
-        }
+        FirebaseApp.initializeApp(this)
 
         enableEdgeToEdge()
 
         auth = FirebaseAuth.getInstance()
+        _currentUser.value = auth
 
         setContent {
             InventoryTheme {
                 val navController = rememberNavController()
-                val currentUser by remember { mutableStateOf(auth.currentUser) } // ✅ Store FirebaseUser
+                val currentUser by _currentUser.asStateFlow().collectAsState(null)
 
-                LaunchedEffect(currentUser) { // ✅ Avoid recomputation issues
+                LaunchedEffect(currentUser) {
                     Log.d("MainActivity", "Current User: $currentUser")
-                    if (currentUser != null) {
+                    if (currentUser?.currentUser != null) {
                         navController.navigate("inventory") {
                             popUpTo("login") { inclusive = true }
                         }

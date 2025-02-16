@@ -6,33 +6,33 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class FirebaseService(
-    private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    val auth: FirebaseAuth,
+    val firestore: FirebaseFirestore
 ) {
 
     suspend fun registerUser(email: String, password: String): Boolean {
         return try {
-            auth.createUserWithEmailAndPassword(email, password).await() // ✅ Firebase Registration
+            auth.createUserWithEmailAndPassword(email, password).await()
             true
         } catch (e: Exception) {
-            println("Registration Error: ${e.message}") // ✅ Debugging Log
+            println("Registration Error: ${e.message}")
             false
         }
     }
 
     suspend fun loginUser(email: String, password: String): Boolean {
         return try {
-            auth.signInWithEmailAndPassword(email, password).await() // ✅ Firebase Login
+            auth.signInWithEmailAndPassword(email, password).await()
             true
         } catch (e: Exception) {
-            println("Login Error: ${e.message}") // ✅ Debugging Log
+            println("Login Error: ${e.message}")
             false
         }
     }
 
     suspend fun addInventoryItem(item: InventoryItem): Boolean {
         return try {
-            firestore.collection("inventory").document(item.id).set(item).await() // ✅ Add to Firestore
+            firestore.collection("inventory").document(item.id).set(item).await()
             true
         } catch (e: Exception) {
             println("Add Item Error: ${e.message}")
@@ -42,7 +42,7 @@ class FirebaseService(
 
     suspend fun deleteInventoryItem(itemId: String): Boolean {
         return try {
-            firestore.collection("inventory").document(itemId).delete().await() // ✅ Delete from Firestore
+            firestore.collection("inventory").document(itemId).delete().await()
             true
         } catch (e: Exception) {
             println("Delete Item Error: ${e.message}")
@@ -54,7 +54,7 @@ class FirebaseService(
         return try {
             firestore.collection("inventory").get().await().documents.mapNotNull { doc ->
                 doc.toObject(InventoryItem::class.java)
-            } // ✅ Fetch from Firestore
+            }
         } catch (e: Exception) {
             println("Get Inventory Error: ${e.message}")
             emptyList()

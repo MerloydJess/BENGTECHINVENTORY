@@ -18,31 +18,51 @@ class InventoryViewModel @Inject constructor(
     private val _inventoryList = MutableStateFlow<List<InventoryItem>>(emptyList())
     val inventoryList: StateFlow<List<InventoryItem>> = _inventoryList
 
+    init {
+        loadInventory() // ✅ Auto-load items when ViewModel is created
+    }
+
     fun loadInventory() {
         viewModelScope.launch {
-            val items = repository.getInventoryItems() // ✅ Calls Repository
-            _inventoryList.value = items
+            try {
+                val items = repository.getInventoryItems()
+                _inventoryList.value = items
+            } catch (e: Exception) {
+                println("Error loading inventory: ${e.message}")
+            }
         }
     }
 
     fun addItem(item: InventoryItem) {
         viewModelScope.launch {
-            repository.addInventoryItem(item) // ✅ Calls Repository
-            loadInventory() // Refresh the list
+            try {
+                repository.addInventoryItem(item)
+                loadInventory()
+            } catch (e: Exception) {
+                println("Error adding item: ${e.message}")
+            }
         }
     }
 
     fun updateItem(item: InventoryItem) {
         viewModelScope.launch {
-            repository.updateInventoryItem(item) // ✅ Calls Repository
-            loadInventory() // Refresh the list
+            try {
+                repository.updateInventoryItem(item)
+                loadInventory()
+            } catch (e: Exception) {
+                println("Error updating item: ${e.message}")
+            }
         }
     }
 
     fun deleteItem(itemId: String) {
         viewModelScope.launch {
-            repository.deleteInventoryItem(itemId) // ✅ Calls Repository
-            loadInventory() // Refresh the list
+            try {
+                repository.deleteInventoryItem(itemId)
+                loadInventory()
+            } catch (e: Exception) {
+                println("Error deleting item: ${e.message}")
+            }
         }
     }
 }

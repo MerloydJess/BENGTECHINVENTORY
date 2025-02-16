@@ -1,6 +1,5 @@
 package com.benguettech.inventory.auth
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,14 +22,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.google.firebase.auth.FirebaseAuth
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.benguettech.inventory.ui.theme.inventory.AuthViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-
 
 @Composable
-fun RegisterScreen(onRegisterSuccess: () -> Unit) {
-    val auth = FirebaseAuth.getInstance()
+fun RegisterScreen(
+    viewModel: AuthViewModel = hiltViewModel(), // ✅ Use injected ViewModel
+    onRegisterSuccess: () -> Unit
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -38,7 +38,9 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -65,9 +67,13 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                 onClick = {
                     isLoading = true
                     coroutineScope.launch {
-                        registerUser(auth, email, password, onRegisterSuccess) { message ->
+                        viewModel.register(email, password) { success ->
                             isLoading = false
-                            errorMessage = message
+                            if (success) {
+                                onRegisterSuccess()
+                            } else {
+                                errorMessage = "Registration failed. Try again."
+                            }
                         }
                     }
                 },
@@ -76,19 +82,8 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                 Text("Register")
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
         errorMessage?.let {
             Text(it, color = MaterialTheme.colorScheme.error)
         }
-    }
-}
-
-suspend fun registerUser(auth: FirebaseAuth, email: String, password: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
-    try {
-        auth.createUserWithEmailAndPassword(email, password).await()
-        onSuccess()
-    } catch (e: Exception) {
-        Log.e("RegisterError", "Failed to register: ${e.message}", e)
-        onError(e.message ?: "Unknown error")
     }
 }

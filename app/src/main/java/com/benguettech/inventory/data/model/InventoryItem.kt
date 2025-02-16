@@ -7,7 +7,8 @@ enum class AccountType {
     data class InventoryItem(
         val id: String = "",
         val name: String = "",
-        val accountType: String = "",
+        val accountType: String? = null,
         val assignedUser: String? = null,
         val status: String = "Available" // Available, Assigned, Returned, Waste
+
     )

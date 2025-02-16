@@ -6,10 +6,20 @@ import javax.inject.Inject
 class AuthRepository @Inject constructor(private val firebaseService: FirebaseService) {
 
     suspend fun register(email: String, password: String): Boolean {
-        return firebaseService.registerUser(email, password)
+        return try {
+            firebaseService.registerUser(email, password)
+        } catch (e: Exception) {
+            println("AuthRepository Error: ${e.message}")
+            false
+        }
     }
 
     suspend fun login(email: String, password: String): Boolean {
-        return firebaseService.loginUser(email, password)
+        return try {
+            firebaseService.loginUser(email, password)
+        } catch (e: Exception) {
+            println("AuthRepository Error: ${e.message}")
+            false
+        }
     }
 }

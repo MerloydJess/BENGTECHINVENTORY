@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.benguettech.inventory.data.model.InventoryItem
 
+
 @Composable
 fun InventoryListScreen(viewModel: InventoryViewModel = hiltViewModel()) {
     val inventoryItems by viewModel.inventoryList.collectAsState()
