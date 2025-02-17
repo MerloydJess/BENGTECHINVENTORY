@@ -1,15 +1,15 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.kotlin.kapt)
-    id("com.google.gms.google-services")
+    alias(libs.plugins.android.application)    // Android Application
+    alias(libs.plugins.kotlin.android)         // Kotlin
+    alias(libs.plugins.kotlin.compose)         // Compose
+    alias(libs.plugins.hilt)                   // Hilt
+    alias(libs.plugins.kotlin.kapt)            // Kapt (for annotation processing)
+    alias(libs.plugins.google.services)        // Google Services (Firebase, etc.)
 }
 
 android {
     namespace = "com.benguettech.inventory"
-    compileSdk = 35
+    compileSdk = 34
 
     packaging {
         resources {
@@ -20,7 +20,7 @@ android {
     defaultConfig {
         applicationId = "com.benguettech.inventory"
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -49,36 +49,40 @@ android {
 }
 
 dependencies {
-
-    implementation(libs.hilt.navigation.compose)
-    kapt (libs.hilt.android.compiler)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.compiler)
-    implementation(libs.ui)
-    implementation(libs.material3)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.firebase.firestore.ktx)
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.lifecycle.viewmodel.ktx)
+    // Core & Lifecycle
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
+
+    // Jetpack Compose
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.storage)
-    implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.navigation.compose)
+
+    // Dagger-Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.analytics)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    // Debugging
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
 }
+

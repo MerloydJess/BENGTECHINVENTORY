@@ -2,7 +2,7 @@ package com.benguettech.inventory.ui.theme.inventory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.benguettech.inventory.data.repository.AuthRepository
+import com.benguettech.inventory.FirebaseService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,18 +13,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val firebaseService: FirebaseService
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow<Boolean>(false)
     val authState: StateFlow<Boolean> = _authState
 
-
-
     fun register(email: String, password: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
-                val success = authRepository.register(email, password)
+                val success = firebaseService.registerUser(email, password)
                 withContext(Dispatchers.Main) {
                     onResult(success)
                 }
@@ -38,7 +36,7 @@ class AuthViewModel @Inject constructor(
     fun login(email: String, password: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
-                val success = authRepository.login(email, password)
+                val success = firebaseService.loginUser(email, password)
                 withContext(Dispatchers.Main) {
                     onResult(success)
                 }
